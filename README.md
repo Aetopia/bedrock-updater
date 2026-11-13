@@ -46,7 +46,7 @@ Download the latest release from [GitHub Releases](https://github.com/Aetopia/Be
 ### [Scoop](https://scoop.sh/)
 ```
 scoop bucket add games
-scoop install bedrockupdater
+scoop install bedrock-updater
 ```
 ## Build
 1. Download the [.NET SDK](https://dotnet.microsoft.com/en-us/download).
@@ -54,5 +54,5 @@ scoop install bedrockupdater
 2. Run the following command to compile:
 
     ```cmd
-    dotnet publish "src\BedrockUpdater.csproj"
+    dotnet publish "src\Bedrock.Updater.csproj"
     ```
