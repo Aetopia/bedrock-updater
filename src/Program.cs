@@ -3,6 +3,8 @@ using System.Linq;
 using System.Windows;
 using System.Threading;
 
+namespace Bedrock.Updater;
+
 static class Program
 {
     static Program() => AppDomain.CurrentDomain.UnhandledException += (sender, args) =>

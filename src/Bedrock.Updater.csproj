@@ -16,11 +16,11 @@
     <ApplicationManifest>Resources/Application.manifest</ApplicationManifest>
     <ApplicationIcon>Resources/Application.ico</ApplicationIcon>
 
-    <AssemblyVersion>3.4.0.1</AssemblyVersion>
-    <AssemblyTitle>Bedrock Updater</AssemblyTitle>
-    <Product>Bedrock Updater</Product>
     <Company>Aetopia</Company>
-    <Copyright>Copyright (C) 2024 - 26 Aetopia</Copyright>
+    <Product>Bedrock Updater</Product>
+    <AssemblyVersion>3.4.1.0</AssemblyVersion>
+    <AssemblyTitle>Bedrock Updater</AssemblyTitle>
+    <Copyright>https://github.com/Aetopia/bedrock-updater</Copyright>
 
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>

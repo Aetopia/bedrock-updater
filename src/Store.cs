@@ -1,11 +1,13 @@
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Store.Preview.InstallControl;
+using Windows.Management.Deployment;
 using static System.Threading.Tasks.TaskContinuationOptions;
 using static Windows.ApplicationModel.Store.Preview.InstallControl.AppInstallState;
-using Windows.Management.Deployment;
+
+namespace Bedrock.Updater;
 
 static class Store
 {
