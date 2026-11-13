@@ -63,8 +63,14 @@ static class Store
             {
                 switch (sender.GetCurrentStatus().InstallState)
                 {
-                    case Completed: _source.TrySetResult(true); break;
-                    case Canceled: if (!_source.Task.IsFaulted) _source.TrySetResult(false); break;
+                    case Completed:
+                        _source.TrySetResult(true);
+                        break;
+
+                    case Canceled:
+                        if (!_source.Task.IsFaulted)
+                            _source.TrySetResult(false);
+                        break;
                 }
             };
 
@@ -72,9 +78,16 @@ static class Store
             {
                 var status = sender.GetCurrentStatus(); switch (status.InstallState)
                 {
-                    case Paused: _source.TrySetResult(false); break;
-                    case Error: _source.TrySetException(status.ErrorCode); break;
-                    case Pending or Downloading or Installing: action(status); break;
+                    case Paused:
+                        _source.TrySetResult(false);
+                        break;
+                    case Error:
+                        _source.TrySetException(status.ErrorCode);
+                        break;
+
+                    case Pending or Downloading or Installing:
+                        action(status);
+                        break;
                 }
             };
         }

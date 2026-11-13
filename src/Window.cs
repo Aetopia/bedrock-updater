@@ -5,14 +5,19 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Windows.ApplicationModel.Store.Preview.InstallControl;
+using Windows.Networking.NetworkOperators;
+using static System.Windows.Media.Imaging.BitmapCacheOption;
+using static System.Windows.Media.Imaging.BitmapCreateOptions;
 using static Windows.ApplicationModel.Store.Preview.InstallControl.AppInstallState;
 
 namespace Bedrock.Updater;
 
 sealed class Window : System.Windows.Window
 {
-    Store.Request? _request; readonly Store.Product[] _products;
-    readonly TextBlock _textBlock1 = new(), _textBlock2 = new() { Text = $"{Pending}..." };
+    Store.Request? _request;
+    readonly Store.Product[] _products;
+    readonly TextBlock _textBlock1 = new();
+    readonly TextBlock _textBlock2 = new() { Text = $"{Pending}..." };
     readonly ProgressBar _progressBar = new() { Width = 359, Height = 23, IsIndeterminate = true };
 
     enum Unit { B, KB, MB, GB }
@@ -23,17 +28,21 @@ sealed class Window : System.Windows.Window
         _products = [Store.Product.GamingServices, value ? Store.Product.MinecraftWindowsBeta : Store.Product.MinecraftUWP];
 
         using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Application.ico"))
-            Icon = BitmapFrame.Create(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+            Icon = BitmapFrame.Create(stream, PreservePixelFormat, OnLoad);
 
         Title = "Bedrock Updater";
-        UseLayoutRounding = true; SnapsToDevicePixels = true;
         WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        ResizeMode = ResizeMode.NoResize; SizeToContent = SizeToContent.WidthAndHeight;
 
-        Content = new Canvas { Width = 381, Height = 115 };
-        ((Canvas)Content).Children.Add(_textBlock1);
-        ((Canvas)Content).Children.Add(_textBlock2);
-        ((Canvas)Content).Children.Add(_progressBar);
+        UseLayoutRounding = true;
+        SnapsToDevicePixels = true;
+
+        ResizeMode = ResizeMode.NoResize;
+        SizeToContent = SizeToContent.WidthAndHeight;
+
+        Canvas canvas = new() { Width = 381, Height = 115 };
+        canvas.Children.Add(_textBlock1);
+        canvas.Children.Add(_textBlock2);
+        canvas.Children.Add(_progressBar);
 
         Canvas.SetLeft(_textBlock1, 11);
         Canvas.SetTop(_textBlock1, 15);
@@ -41,6 +50,8 @@ sealed class Window : System.Windows.Window
         Canvas.SetTop(_textBlock2, 84);
         Canvas.SetLeft(_progressBar, 11);
         Canvas.SetTop(_progressBar, 46);
+
+        Content = canvas;
     }
 
     protected override void OnClosing(CancelEventArgs args)
@@ -79,8 +90,13 @@ sealed class Window : System.Windows.Window
     {
         switch (args.InstallState)
         {
-            case Pending or Installing: _textBlock2.Text = $"{args.InstallState}..."; break;
-            case Downloading: _textBlock2.Text = $"{args.InstallState}... {Stringify(args.BytesDownloaded)} / {Stringify(args.DownloadSizeInBytes)}"; break;
+            case Pending or Installing:
+                _textBlock2.Text = $"{args.InstallState}...";
+                break;
+                
+            case Downloading:
+                _textBlock2.Text = $"{args.InstallState}... {Stringify(args.BytesDownloaded)} / {Stringify(args.DownloadSizeInBytes)}";
+                break;
         }
 
         if (_progressBar.Value != args.PercentComplete)
