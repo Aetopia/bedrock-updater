@@ -2,8 +2,10 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using static System.StringComparison;
 using static System.Windows.MessageBoxButton;
 using static System.Windows.MessageBoxImage;
+using static System.Windows.ShutdownMode;
 
 namespace Bedrock.Updater;
 
@@ -11,7 +13,7 @@ static class Program
 {
     const string Caption = "Bedrock Updater: Error";
 
-    static Program() => AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+    static Program() => AppDomain.CurrentDomain.UnhandledException += static (sender, args) =>
     {
         var exception = (Exception)args.ExceptionObject;
         while (exception.InnerException is { }) exception = exception.InnerException;
@@ -27,8 +29,11 @@ static class Program
     [STAThread]
     static void Main(string[] args)
     {
-        using Mutex mutex = new(false, "C7B58EAD-356C-40A1-A145-7262C3C04D00", out var value);
-        if (!value) return; value = args.Any(_ => _.Equals("/preview", StringComparison.OrdinalIgnoreCase));
-        new Application { ShutdownMode = ShutdownMode.OnMainWindowClose }.Run(new Window(value));
+        using Mutex mutex = new(false, "C7B58EAD-356C-40A1-A145-7262C3C04D00", out var created);
+        if (created)
+        {
+            var value = args.Any(static _ => _.Equals("/preview", OrdinalIgnoreCase));
+            new Application { ShutdownMode = OnMainWindowClose }.Run(new Window(value));
+        }
     }
 }
