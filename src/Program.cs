@@ -12,6 +12,7 @@ namespace Bedrock.Updater;
 static class Program
 {
     const string Caption = "Bedrock Updater: Error";
+    const string Name = "C7B58EAD-356C-40A1-A145-7262C3C04D00";
 
     static Program() => AppDomain.CurrentDomain.UnhandledException += static (sender, args) =>
     {
@@ -29,8 +30,7 @@ static class Program
     [STAThread]
     static void Main(string[] args)
     {
-        using Mutex mutex = new(false, "C7B58EAD-356C-40A1-A145-7262C3C04D00", out var created);
-        if (created)
+        using Mutex mutex = new(false, Name, out var created); if (created)
         {
             var value = args.Any(static _ => _.Equals("/preview", OrdinalIgnoreCase));
             new Application { ShutdownMode = OnMainWindowClose }.Run(new Window(value));
