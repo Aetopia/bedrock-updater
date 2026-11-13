@@ -1,18 +1,26 @@
 using System;
 using System.Linq;
-using System.Windows;
 using System.Threading;
+using System.Windows;
+using static System.Windows.MessageBoxButton;
+using static System.Windows.MessageBoxImage;
 
 namespace Bedrock.Updater;
 
 static class Program
 {
+    const string Caption = "Bedrock Updater: Error";
+
     static Program() => AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
     {
         var exception = (Exception)args.ExceptionObject;
-        while (exception.InnerException is not null) exception = exception.InnerException;
+        while (exception.InnerException is { }) exception = exception.InnerException;
 
-        MessageBox.Show(exception.Message, "Bedrock Updater: Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        if (Application.Current?.MainWindow is not { } owner)
+            MessageBox.Show(exception.Message, Caption, OK, Error);
+        else
+            MessageBox.Show(owner, exception.Message, Caption, OK, Error);
+
         Environment.Exit(1);
     };
 
