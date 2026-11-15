@@ -7,7 +7,7 @@ using Windows.Management.Deployment;
 using static System.Threading.Tasks.TaskContinuationOptions;
 using static Windows.ApplicationModel.Store.Preview.InstallControl.AppInstallState;
 
-namespace Bedrock.Updater;
+namespace Bedrock.Updater.Legacy;
 
 static class Store
 {

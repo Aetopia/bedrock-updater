@@ -4,8 +4,8 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
+using Bedrock.Updater.Legacy;
 using Windows.ApplicationModel.Store.Preview.InstallControl;
-using Windows.Networking.NetworkOperators;
 using static System.Windows.Media.Imaging.BitmapCacheOption;
 using static System.Windows.Media.Imaging.BitmapCreateOptions;
 using static Windows.ApplicationModel.Store.Preview.InstallControl.AppInstallState;
@@ -93,7 +93,7 @@ sealed class Window : System.Windows.Window
             case Pending or Installing:
                 _textBlock2.Text = $"{args.InstallState}...";
                 break;
-                
+
             case Downloading:
                 _textBlock2.Text = $"{args.InstallState}... {Stringify(args.BytesDownloaded)} / {Stringify(args.DownloadSizeInBytes)}";
                 break;
