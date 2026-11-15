@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Bedrock.Updater.Legacy;
+using static Windows.Win32.PInvoke;
 using Windows.ApplicationModel.Store.Preview.InstallControl;
 using static System.Windows.Media.Imaging.BitmapCacheOption;
 using static System.Windows.Media.Imaging.BitmapCreateOptions;

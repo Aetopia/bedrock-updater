@@ -40,25 +40,22 @@ static class MicrosoftStore
         return value;
     });
 
-    extension(AppMetadata @this)
+    internal static async Task<InstallRequest<T>?> InstallAsync<T>(AppMetadata app, T progress) where T : IProgress<AppInstallStatus>
     {
-        internal async Task<InstallRequest<T>?> InstallAsync<T>(T progress) where T : IProgress<AppInstallStatus>
+        var item = await GetAsync(app.ProductId);
+        if (item is { }) return new(item, progress);
+
+        if (app.IsInstalled)
+            item = await s_manager.UpdateAppByPackageFamilyNameAsync(app.PackageFamilyName);
+        else
+            item = await s_manager.StartAppInstallAsync(app.ProductId, string.Empty, false, false);
+
+        if (item is { })
         {
-            var item = await GetAsync(@this.ProductId);
-            if (item is { }) return new(item, progress);
-
-            if (@this.IsInstalled)
-                item = await s_manager.UpdateAppByPackageFamilyNameAsync(@this.PackageFamilyName);
-            else
-                item = await s_manager.StartAppInstallAsync(@this.ProductId, string.Empty, false, false);
-
-            if (item is { })
-            {
-                s_manager.MoveToFrontOfDownloadQueue(item.ProductId, string.Empty);
-                return new(item, progress);
-            }
-
-            return null;
+            s_manager.MoveToFrontOfDownloadQueue(item.ProductId, string.Empty);
+            return new(item, progress);
         }
+
+        return null;
     }
 }
