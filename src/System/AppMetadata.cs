@@ -6,6 +6,7 @@ namespace Bedrock.Updater.System;
 
 abstract class AppMetadata
 {
+    private protected AppMetadata() { }
     internal abstract string ProductId { get; }
     internal abstract string PackageFamilyName { get; }
 }
