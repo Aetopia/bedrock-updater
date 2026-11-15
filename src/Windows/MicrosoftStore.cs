@@ -30,7 +30,7 @@ static class MicrosoftStore
                 case PausedWiFiRequired:
                 case PausedWiFiRecommended:
                     item.Restart();
-                    continue;
+                    break;
             }
 
             if (productId.Equals(item.ProductId, OrdinalIgnoreCase))
