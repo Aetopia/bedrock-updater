@@ -47,7 +47,7 @@ sealed class InstallRequest<T> where T : IProgress<AppInstallStatus>
 
     void OnFaulted(Task<bool> task)
     {
-        try { _item.Cancel(); } catch { }
+        _item.Cancel();
     }
 
     void OnCompleted(AppInstallItem sender, object args)
