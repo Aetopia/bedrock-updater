@@ -4,8 +4,8 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using Bedrock.Updater.Legacy;
-using static Windows.Win32.PInvoke;
+using Bedrock.Updater.System;
+using Bedrock.Updater.Windows;
 using Windows.ApplicationModel.Store.Preview.InstallControl;
 using static System.Windows.Media.Imaging.BitmapCacheOption;
 using static System.Windows.Media.Imaging.BitmapCreateOptions;
@@ -13,43 +13,49 @@ using static Windows.ApplicationModel.Store.Preview.InstallControl.AppInstallSta
 
 namespace Bedrock.Updater;
 
-sealed class MainWindow : Window
+sealed class MainWindow : Window, IProgress<AppInstallStatus>
 {
-    Store.Request? _request;
-    readonly Store.Product[] _products;
+    readonly AppMetadata[] _apps;
     readonly TextBlock _textBlock1 = new();
-    readonly TextBlock _textBlock2 = new() { Text = $"{Pending}..." };
+    readonly TextBlock _textBlock2 = new() { Text = $"{nameof(Pending)}..." };
     readonly ProgressBar _progressBar = new() { Width = 359, Height = 23, IsIndeterminate = true };
 
-    enum Unit { B, KB, MB, GB }
+    InstallRequest<MainWindow>? _request;
 
     internal MainWindow(bool value)
     {
         _textBlock1.Text = $"Updating {(value ? "Preview" : "Release")}...";
-        _products = [Store.Product.GamingServices, value ? Store.Product.MinecraftWindowsBeta : Store.Product.MinecraftUWP];
+        _apps = [GamingServices._, value ? MinecraftWindowsBeta._ : MinecraftUWP._];
 
-        using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Application.ico"))
-            Icon = BitmapFrame.Create(stream, PreservePixelFormat, OnLoad);
+        var assembly = Assembly.GetExecutingAssembly();
+        using var stream = assembly.GetManifestResourceStream("Application.ico");
 
         Title = "Bedrock Updater";
-        WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        Icon = BitmapFrame.Create(stream, PreservePixelFormat, OnLoad);
 
         UseLayoutRounding = true;
         SnapsToDevicePixels = true;
 
         ResizeMode = ResizeMode.NoResize;
         SizeToContent = SizeToContent.WidthAndHeight;
+        WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-        Canvas canvas = new() { Width = 381, Height = 115 };
+        Canvas canvas = new()
+        {
+            Width = 381,
+            Height = 115
+        };
+
         canvas.Children.Add(_textBlock1);
         canvas.Children.Add(_textBlock2);
         canvas.Children.Add(_progressBar);
 
         Canvas.SetLeft(_textBlock1, 11);
-        Canvas.SetTop(_textBlock1, 15);
         Canvas.SetLeft(_textBlock2, 11);
-        Canvas.SetTop(_textBlock2, 84);
         Canvas.SetLeft(_progressBar, 11);
+
+        Canvas.SetTop(_textBlock1, 15);
+        Canvas.SetTop(_textBlock2, 84);
         Canvas.SetTop(_progressBar, 46);
 
         Content = canvas;
@@ -57,10 +63,15 @@ sealed class MainWindow : Window
 
     protected override void OnClosing(CancelEventArgs args)
     {
-        base.OnClosing(args); if (_request?.Cancel() ?? false)
+        base.OnClosing(args);
+
+        if (_request?.Cancel() ?? false)
         {
-            args.Cancel = true; _textBlock2.Text = $"{Pending}...";
-            _progressBar.Value = 0; _progressBar.IsIndeterminate = true;
+            args.Cancel = true;
+            _textBlock2.Text = $"{nameof(Pending)}...";
+
+            _progressBar.Value = 0;
+            _progressBar.IsIndeterminate = true;
         }
     }
 
@@ -68,35 +79,43 @@ sealed class MainWindow : Window
     {
         base.OnContentRendered(args);
 
-        foreach (var product in _products)
+        foreach (var app in _apps)
         {
-            _request = await Store.GetAsync(product, Action);
-            if (_request is { } @_) if (!await _) break;
+            _request = await app.InstallAsync(this); try
+            {
+                if (_request is { } request)
+                    if (!await request) break;
 
-            _request = null; _textBlock2.Text = $"{Pending}...";
-            _progressBar.Value = 0; _progressBar.IsIndeterminate = true;
+                _progressBar.Value = 0;
+                _progressBar.IsIndeterminate = true;
+
+                _textBlock2.Text = $"{nameof(Pending)}...";
+            }
+            finally
+            {
+                _request = null;
+            }
         }
 
         Close();
     }
 
-    static string Stringify(double value)
-    {
-        var x = Math.Abs(value);
-        var y = (int)Math.Log(Math.Max(x, 1), 1024);
-        return $"{x / Math.Pow(1024, y):0.##} {(Unit)y}";
-    }
-
-    void Action(AppInstallStatus args) => Dispatcher.Invoke(() =>
+    public void Report(AppInstallStatus args) => Dispatcher.Invoke(() =>
     {
         switch (args.InstallState)
         {
-            case Pending or Installing:
-                _textBlock2.Text = $"{args.InstallState}...";
+            case Pending:
+                _textBlock2.Text = $"{nameof(Pending)}...";
+                break;
+
+            case Installing:
+                _textBlock2.Text = $"{nameof(Installing)}...";
                 break;
 
             case Downloading:
-                _textBlock2.Text = $"{args.InstallState}... {Stringify(args.BytesDownloaded)} / {Stringify(args.DownloadSizeInBytes)}";
+                var current = args.BytesDownloaded;
+                var total = args.DownloadSizeInBytes;
+                _textBlock2.Text = $"{nameof(Downloading)}... {current.AsBytes()} / {total.AsBytes()}";
                 break;
         }
 
