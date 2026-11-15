@@ -12,7 +12,7 @@ using static Windows.ApplicationModel.Store.Preview.InstallControl.AppInstallSta
 
 namespace Bedrock.Updater;
 
-sealed class Window : System.Windows.Window
+sealed class MainWindow : Window
 {
     Store.Request? _request;
     readonly Store.Product[] _products;
@@ -22,7 +22,7 @@ sealed class Window : System.Windows.Window
 
     enum Unit { B, KB, MB, GB }
 
-    internal Window(bool value)
+    internal MainWindow(bool value)
     {
         _textBlock1.Text = $"Updating {(value ? "Preview" : "Release")}...";
         _products = [Store.Product.GamingServices, value ? Store.Product.MinecraftWindowsBeta : Store.Product.MinecraftUWP];

@@ -33,7 +33,7 @@ static class Program
         using Mutex mutex = new(false, Name, out var created); if (created)
         {
             var value = args.Any(static _ => _.Equals("/preview", OrdinalIgnoreCase));
-            new Application { ShutdownMode = OnMainWindowClose }.Run(new Window(value));
+            new Application { ShutdownMode = OnMainWindowClose }.Run(new MainWindow(value));
         }
     }
 }
