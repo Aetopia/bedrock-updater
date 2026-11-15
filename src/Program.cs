@@ -1,14 +1,11 @@
 using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using static System.StringComparison;
 using static System.Windows.MessageBoxButton;
 using static System.Windows.MessageBoxImage;
 using static System.Windows.ShutdownMode;
-
-[assembly: DefaultDllImportSearchPaths(DllImportSearchPath.System32)]
 
 namespace Bedrock.Updater;
 

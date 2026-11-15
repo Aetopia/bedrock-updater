@@ -1,8 +1,6 @@
 using System;
 using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Channels;
 using System.Threading.Tasks;
-using Bedrock.Updater.System;
 using Windows.ApplicationModel.Store.Preview.InstallControl;
 using static System.Threading.Tasks.TaskContinuationOptions;
 using static Windows.ApplicationModel.Store.Preview.InstallControl.AppInstallState;

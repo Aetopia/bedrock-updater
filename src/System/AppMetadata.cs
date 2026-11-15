@@ -1,6 +1,4 @@
 using System;
-using Bedrock.Updater.System;
-using Windows.System;
 
 namespace Bedrock.Updater.System;
 

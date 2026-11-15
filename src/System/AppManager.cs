@@ -1,5 +1,4 @@
 using System.Linq;
-using Windows.ApplicationModel.Store.Preview.InstallControl;
 using Windows.Management.Deployment;
 
 namespace Bedrock.Updater.System;
