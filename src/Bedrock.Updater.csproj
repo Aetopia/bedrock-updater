@@ -6,15 +6,17 @@
     <UseWPF>true</UseWPF>
     <Optimize>true</Optimize>
 
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <PublishRelease>true</PublishRelease>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 
-    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+
+    <NoWarn>PInvoke009</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-    <ApplicationManifest>Resources/Application.manifest</ApplicationManifest>
     <ApplicationIcon>Resources/Application.ico</ApplicationIcon>
+    <ApplicationManifest>Resources/Application.manifest</ApplicationManifest>
 
     <Company>Aetopia</Company>
     <Product>Bedrock Updater</Product>
@@ -27,10 +29,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources/Application.ico" LogicalName="Application.ico" />
+    <EmbeddedResource Include="Resources\Application.ico" LogicalName="Application.ico" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.371" />
     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.17134.1000" />
   </ItemGroup>
 </Project>
