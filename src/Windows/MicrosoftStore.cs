@@ -34,7 +34,7 @@ static class MicrosoftStore
             }
 
             if (productId.Equals(item.ProductId, OrdinalIgnoreCase))
-                value = item;
+                s_manager.MoveToFrontOfDownloadQueue((value = item).ProductId, string.Empty);
         }
 
         return value;
@@ -50,12 +50,6 @@ static class MicrosoftStore
         else
             item = await s_manager.StartAppInstallAsync(app.ProductId, string.Empty, false, false);
 
-        if (item is { })
-        {
-            s_manager.MoveToFrontOfDownloadQueue(item.ProductId, string.Empty);
-            return new(item, progress);
-        }
-
-        return null;
+        return item is { } ? new(item, progress) : null;
     }
 }
