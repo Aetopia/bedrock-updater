@@ -65,21 +65,21 @@ sealed class InstallRequest<T> where T : IProgress<AppInstallStatus>
 
     void OnStatusChanged(AppInstallItem sender, object args)
     {
-        var status = sender.GetCurrentStatus();
-        switch (status.InstallState)
-        {
-            case Error:
-                _tcs.TrySetException(status.ErrorCode);
-                break;
+        var value = sender.GetCurrentStatus();
+        var state = value.InstallState;
 
+        switch (state)
+        {
             case Paused:
                 _tcs.TrySetResult(false);
                 break;
 
-            case Pending:
-            case Installing:
-            case Downloading:
-                _progress.Report(status);
+            case Error:
+                _tcs.TrySetException(value.ErrorCode);
+                break;
+
+            case Pending or Installing or Downloading:
+                _progress.Report(value);
                 break;
         }
     }
