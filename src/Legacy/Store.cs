@@ -9,6 +9,7 @@ using static Windows.ApplicationModel.Store.Preview.InstallControl.AppInstallSta
 
 namespace Bedrock.Updater.Legacy;
 
+[Obsolete("This implementation of the store handler is deprecated.", true)]
 static class Store
 {
     static readonly PackageManager s_package = new();
